@@ -1,2 +1,0 @@
-# xric
-R samples
