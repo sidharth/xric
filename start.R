@@ -57,13 +57,16 @@ colnames(age_label) <- c("id", "age", "label")
 all_obs <- merge(id_time_vitals, id_time_labs, by = c("id", "timestamp"))
 
 complete_data <- merge(all_obs, age_label,by = "id")
-complete_data$label <- factor(complete_data$label, levels = c(0,1), labels = c("Survived", "Not survived"))
+# complete_data$label <- factor(complete_data$label, levels = c(0,1), labels = c("Survived", "Not survived"))
 # For generating plots of all variables wrt to patient id
 library(ggplot2)
 for (i in 3:34) {
     qplot(complete_data$id,complete_data[[i]], xlab = "id", ylab = colnames(complete_data)[i], col = complete_data$label)
     ggsave(filename = paste(colnames(complete_data)[i] ,"-vs-id.jpg"), plot = last_plot() )
 }
+
+qplot(max_obs$id,complete_data[[4]], xlab = "id", ylab = colnames(max_obs)[4], col = max_obs$label)
+ggsave(filename = paste(colnames(complete_data)[i] ,"-vs-id.jpg"), plot = last_plot() )
 
 #histogram of age
 hist(age_label$AGE)
@@ -86,11 +89,19 @@ max_obs <- aggregate(complete_data, list(complete_data$id), max, na.rm = TRUE)
 min_obs <- aggregate(complete_data, list(complete_data$id), min, na.rm = TRUE)
 sd_obs <- aggregate(complete_data, list(complete_data$id), sd, na.rm = TRUE)
 
+# max_obs2 <- aggregate(complete_data, list(complete_data$id), max, )
+max_obs2 <- max_obs[is.finite(max_obs$diastolic),]
+qplot(max_obs2$id,max_obs2[[4]], xlab = "id", ylab = colnames(max_obs2)[4], col = max_obs2$label)
+
 sd_obs$id <- sd_obs$Group.1 #Because standard deviation of id's are zero
 sd_obs$label <- age_label$label
 
 # Filling na
 
+# for (i in 4:37) {
+#   qplot(mean_obs$id,mean_obs[[i]], xlab = "id", ylab = colnames(mean_obs)[i], col = mean_obs$label)
+#   ggsave(filename = paste(colnames(complete_data)[i] ,"-vs-id.jpg",sep = ""), plot = last_plot() )
+# }
 
 
 
